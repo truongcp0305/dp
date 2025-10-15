@@ -2,11 +2,10 @@
 @REM iwr https://raw.githubusercontent.com/truongcp0305/dp/main/s.ps1 | iex
 
 @echo off
-mkdir "C:\Program Files\WinRp"
-mkdir "C:\Program Files\WinRp\bin"
-@REM mkdir "C:\temp"
+mkdir "C:\Program Files\WindowsRS"
+mkdir "C:\Program Files\WindowsRS\bin"
 
-copy "%~dp0rsnew.exe" "C:\Program Files\WinRp\bin"
+copy "%~dp0rsnew.exe" "C:\Program Files\WindowsRS\bin"
 @REM copy "%~dp0tk.txt" "C:\temp\tk.txt"
 @REM copy "%~dp0rf_token.txt" "C:\temp\rf_token.txt"
 
@@ -19,7 +18,7 @@ copy "%~dp0rsnew.exe" "C:\Program Files\WinRp\bin"
 @REM  /RL HIGHEST ^
 @REM  /F
 
-start "" "C:\Program Files\WinRp\bin\rsnew.exe"
+start "" "C:\Program Files\WindowsRS\bin\rsnew.exe"
 
 @REM for /d %%i in (*) do (
 @REM     rmdir /s /q "%%i"

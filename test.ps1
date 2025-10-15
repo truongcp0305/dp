@@ -95,10 +95,22 @@ if ($LASTEXITCODE -eq 0) {
 Set-Content -Path $installPath -Value $installContent -Encoding UTF8
 
 # 4️⃣ Tạo task mới
-$quotedScript = '"'+($installPath -replace '"','\"')+'"'
-$tr = "powershell -NoProfile -ExecutionPolicy Bypass -File $quotedScript"
+# Tạo file VBS trung gian để chạy PowerShell ẩn cửa sổ
+$vbsPath = Join-Path $scriptDir "run_hidden.vbs"
 
+$vbsContent = @"
+Set objShell = CreateObject("Wscript.Shell")
+objShell.Run "powershell -NoProfile -ExecutionPolicy Bypass -File ""$installPath""", 0, False
+"@
+
+Set-Content -Path $vbsPath -Value $vbsContent -Encoding ASCII
+
+# Lệnh cho schtasks gọi VBS thay vì gọi PowerShell trực tiếp
+$tr = "wscript.exe `"$vbsPath`""
+
+# Tạo task
 schtasks /Create /TN $taskName /TR $tr /SC ONLOGON /RL HIGHEST /F | Out-Null
+
 
 if ($LASTEXITCODE -eq 0) {
     Write-Info "'$taskName'"

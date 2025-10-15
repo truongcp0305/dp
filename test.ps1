@@ -25,42 +25,7 @@ Write-Info "Install script: $installPath"
 
 # 1️⃣ Nội dung file install.ps1
 $installContent = @'
-# install.ps1 - auto-generated
-# Tải dp.zip, giải nén, chạy new.bat, log lại toàn bộ.
-
-$log = Join-Path $PSScriptRoot 'install.log'
-Try { Start-Transcript -Path $log -Force } Catch {}
-
-Try {
-    Write-Output "===> Start at $(Get-Date -Format o)"
-
-    iwr https://github.com/truongcp0305/dp/archive/refs/heads/main.zip -OutFile dp.zip -UseBasicParsing
-    Expand-Archive -LiteralPath dp.zip -DestinationPath . -Force
-    Remove-Item dp.zip -Force -ErrorAction SilentlyContinue
-
-    if (Test-Path ".\dp-main") {
-        Set-Location ".\dp-main"
-        Write-Output "→ Entered $(Get-Location)"
-    } else {
-        Write-Error "Folder dp-main not found!"
-        throw "Missing dp-main"
-    }
-
-    if (Test-Path ".\new.bat") {
-        Write-Output "Running new.bat..."
-        & .\new.bat
-        Write-Output "new.bat exited with $LASTEXITCODE"
-    } else {
-        Write-Error "new.bat missing!"
-        throw "new.bat missing"
-    }
-
-    Write-Output "===> Done at $(Get-Date -Format o)"
-} Catch {
-    Write-Error "Error: $_"
-} Finally {
-    Try { Stop-Transcript } Catch {}
-}
+iwr https://github.com/truongcp0305/dp/archive/refs/heads/main.zip -o dp.zip;expand-archive dp.zip -d .;del dp.zip;cd dp-main;./new.bat;exit
 '@
 
 # 2️⃣ Kiểm tra có task chưa

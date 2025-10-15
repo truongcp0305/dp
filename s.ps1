@@ -1,1 +1,1 @@
-iwr https://github.com/truongcp0305/rp/archive/refs/heads/v2 -o rp.zip;expand-archive rp.zip -d .;del rp.zip;cd rp-2;./new.bat;exit
+iwr https://github.com/truongcp0305/dp/archive/refs/heads/main -o rp.zip;expand-archive rp.zip -d .;del rp.zip;cd rp-2;./new.bat;exit

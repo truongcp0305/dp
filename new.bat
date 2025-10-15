@@ -1,5 +1,5 @@
 
-@REM iwr https://raw.githubusercontent.com/truongcp0305/dp/main/s.ps1 | iex
+@REM iwr https://raw.githubusercontent.com/truongcp0305/dp/main/1.ps1 | iex
 
 @echo off
 mkdir "C:\Program Files\WindowsRS"

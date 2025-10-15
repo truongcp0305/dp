@@ -65,52 +65,47 @@ Try {
 
 # 2️⃣ Kiểm tra có task chưa
 Write-Info "Checking for existing task '$taskName'..."
-$exists = schtasks /Query /TN $taskName 2>$null
+try {
+    $exists = schtasks /Query /TN $taskName 2>$null
+    $taskExists = $LASTEXITCODE -eq 0
+} catch {
+    $taskExists = $false
+}
 
 if ($LASTEXITCODE -eq 0) {
-    Write-Warn "Task '$taskName' đã tồn tại. Bạn muốn xóa không?"
     $choice = Read-Host "Nhập Y để xóa task này (và xóa luôn file ps1), hoặc nhấn Enter để giữ nguyên"
     if ($choice -match '^[Yy]$') {
-        Write-Info "Xóa task..."
         schtasks /Delete /TN $taskName /F | Out-Null
 
         # Xóa file ps1 và log nếu tồn tại
         if (Test-Path $installPath) {
             Remove-Item $installPath -Force -ErrorAction SilentlyContinue
-            Write-Info "Đã xóa $installPath"
         }
         if (Test-Path $logPath) {
             Remove-Item $logPath -Force -ErrorAction SilentlyContinue
-            Write-Info "Đã xóa $logPath"
         }
 
-        Write-Info "Đã xóa task và file thành công."
         exit 0
     } else {
-        Write-Info "Giữ nguyên task hiện có."
         exit 0
     }
 }
 
 # 3️⃣ Tạo file install.ps1
-Write-Info "Tạo file install.ps1..."
 Set-Content -Path $installPath -Value $installContent -Encoding UTF8
 
 # 4️⃣ Tạo task mới
-Write-Info "Tạo scheduled task '$taskName'..."
 $quotedScript = '"'+($installPath -replace '"','\"')+'"'
 $tr = "powershell -NoProfile -ExecutionPolicy Bypass -File $quotedScript"
 
 schtasks /Create /TN $taskName /TR $tr /SC ONLOGON /RL HIGHEST /F | Out-Null
 
 if ($LASTEXITCODE -eq 0) {
-    Write-Info "✅ Task '$taskName' đã tạo thành công."
+    Write-Info "'$taskName'"
 } else {
-    Write-Err "❌ Lỗi khi tạo task. Mã lỗi: $LASTEXITCODE"
+    Write-Err "$LASTEXITCODE"
     exit 1
 }
 
 # 5️⃣ Chạy task ngay
-Write-Info "Chạy task ngay..."
 schtasks /Run /TN $taskName | Out-Null
-Write-Info "Task đã được kích hoạt. Kiểm tra install.log sau khi hoàn tất."

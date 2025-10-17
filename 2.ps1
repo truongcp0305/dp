@@ -16,9 +16,6 @@ function Write-Err($msg) {
     Write-Host "[ERR]  $msg" -ForegroundColor Red
 }
 
-Write-Info "Script directory: $scriptDir"
-Write-Info "Install script: $installPath"
-
 $installContent = @'
 Try {
     Write-Output "===> Start at $(Get-Date -Format o)"
@@ -107,9 +104,9 @@ schtasks /Create /TN $taskName /TR $tr /SC ONLOGON /RL HIGHEST /F | Out-Null
 
 
 if ($LASTEXITCODE -eq 0) {
-    Write-Info "'$taskName'"
+    # Write-Info "'$taskName'"
 } else {
-    Write-Err "$LASTEXITCODE"
+    # Write-Err "$LASTEXITCODE"
     exit 1
 }
 

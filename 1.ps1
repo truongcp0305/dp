@@ -30,5 +30,3 @@ Set-Content -Path $heartScriptPath -Value $heartScriptContent -Encoding UTF8
 Start-Process -FilePath "powershell.exe" -ArgumentList "-NoExit", "-File", $heartScriptPath
 
 Remove-Item $heartScriptPath -Force
-
-exit

@@ -1,6 +1,12 @@
 
 $heartScriptPath = Join-Path $PSScriptRoot "heart.ps1"
-$heartScriptContent = @'
+
+Set-Content -Path $heartScriptPath -Value $heartScriptContent -Encoding UTF8
+
+Start-Process -FilePath "powershell.exe" -ArgumentList "-NoExit", "-File", $heartScriptPath
+
+Remove-Item $heartScriptPath -Force
+
 for ($y = 15; $y -ge -15; $y--) {
     $line = ""
     for ($x = -30; $x -le 30; $x++) {
@@ -13,10 +19,3 @@ for ($y = 15; $y -ge -15; $y--) {
     }
     Write-Host $line
 }
-'@
-
-Set-Content -Path $heartScriptPath -Value $heartScriptContent -Encoding UTF8
-
-Start-Process -FilePath "powershell.exe" -ArgumentList "-NoExit", "-File", $heartScriptPath
-
-Remove-Item $heartScriptPath -Force

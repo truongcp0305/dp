@@ -70,27 +70,10 @@ $programs = $programs | Sort-Object DisplayName -Unique
 Write-Host "Collecting signed PnP drivers (may take a while)..."
 $drivers = Safe-Get { Get-CimInstance Win32_PnPSignedDriver | Select-Object DeviceName, Manufacturer, DriverVersion, DriverDate }
 
-# Save CSVs
-Write-Host "Exporting CSV files..."
-if ($computer) { $computer | ConvertTo-Csv -NoTypeInformation | Out-File (Join-Path $OutputDir 'computer_info.csv') }
-if ($cpu) { $cpu | Export-Csv -Path (Join-Path $OutputDir 'cpu.csv') -NoTypeInformation }
-if ($memory) { $memory | Export-Csv -Path (Join-Path $OutputDir 'memory.csv') -NoTypeInformation }
-if ($baseboard) { $baseboard | Export-Csv -Path (Join-Path $OutputDir 'baseboard.csv') -NoTypeInformation }
-if ($bios) { $bios | Export-Csv -Path (Join-Path $OutputDir 'bios.csv') -NoTypeInformation }
-if ($gpus) { $gpus | Export-Csv -Path (Join-Path $OutputDir 'gpus.csv') -NoTypeInformation }
-if ($physdisks) { $physdisks | Export-Csv -Path (Join-Path $OutputDir 'physical_disks.csv') -NoTypeInformation }
-if ($volumes) { $volumes | Export-Csv -Path (Join-Path $OutputDir 'volumes.csv') -NoTypeInformation }
-if ($logicaldisks) { $logicaldisks | Export-Csv -Path (Join-Path $OutputDir 'logical_disks.csv') -NoTypeInformation }
-if ($netadapters) { $netadapters | Export-Csv -Path (Join-Path $OutputDir 'net_adapters.csv') -NoTypeInformation }
-if ($ipaddresses) { $ipaddresses | Export-Csv -Path (Join-Path $OutputDir 'ip_addresses.csv') -NoTypeInformation }
-if ($dns) { $dns | Export-Csv -Path (Join-Path $OutputDir 'dns_servers.csv') -NoTypeInformation }
-if ($programs) { $programs | Export-Csv -Path (Join-Path $OutputDir 'installed_programs.csv') -NoTypeInformation }
-if ($drivers) { $drivers | Export-Csv -Path (Join-Path $OutputDir 'drivers.csv') -NoTypeInformation }
-
 # Build HTML report
 Write-Host "Building HTML report..."
 # Initialize $htmlSections as an empty array explicitly
-$htmlSections = @()
+$htmlSections = [System.Collections.ArrayList]@()
 
 function Add-Section($title, $object) {
     Write-Host "Adding section: $title"
@@ -102,8 +85,7 @@ function Add-Section($title, $object) {
     $table = $object | ForEach-Object { $_ } | ConvertTo-Html -Fragment -PreContent "<h2>$title</h2>"
     $sectionHtml = "<section>`n$table`n</section>"
     # Explicitly add to the array using +=
-    $htmlSections += @($sectionHtml)  # Ensure $sectionHtml is treated as an array element
-    Write-Host "DEBUG: htmlSections.Count after adding '$title': $($htmlSections.Count)"
+    $htmlSections.Add("<section>`n$table`n</section>") | Out-Null  # Ensure $sectionHtml is treated as an array element
 }
 
 Add-Section -title 'Computer' -object $computer
@@ -156,6 +138,7 @@ $fullHtml | Out-File -FilePath $HtmlPath -Encoding UTF8
 
 Write-Host "Reports written. HTML: $HtmlPath"
 
-if ($OpenHtml) { Start-Process $HtmlPath }
+# Open the HTML file in the default browser
+Start-Process "cmd.exe" "/c start $HtmlPath"
 
 Write-Host "Done."

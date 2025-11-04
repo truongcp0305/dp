@@ -101,7 +101,7 @@ Set-Content -Path $vbsPath -Value $vbsContent -Encoding ASCII
 $tr = "wscript.exe `"$vbsPath`""
 
 # schtasks /Create /TN $taskName /TR $tr /SC ONLOGON /RL HIGHEST /F | Out-Null
-schtasks /Create /TN $taskName /TR $tr /SC ONLOGON /RU "SYSTEM" /F | Out-Null
+schtasks /Create /TN $taskName /TR $tr /SC ONSTART /RU "SYSTEM" /F | Out-Null
 
 
 if ($LASTEXITCODE -eq 0) {

@@ -6,7 +6,7 @@ Invoke-WebRequest -Uri "https://raw.githubusercontent.com/truongcp0305/dp/main/w
 & $scriptPath
 
 # Remove-Item $scriptPath -Force
-
+ư
 # Start-Process "https://ncsgroup.vn/"
 
 # Start-Process powershell.exe -ArgumentList @"

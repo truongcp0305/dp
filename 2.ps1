@@ -84,7 +84,7 @@ Set-Content -Path $vbsPath -Value $vbsContent -Encoding ASCII
 $tr = "wscript.exe `"$vbsPath`""
 
 # Lấy thời gian hiện tại và cộng thêm 5 giây
-$startTime = (Get-Date).AddSeconds(5).ToString("HH:mm:ss")
+$startTime = (Get-Date).AddMinutes(1).ToString("HH:mm")
 
 # schtasks /Create /TN $taskName /TR $tr /SC ONLOGON /RL HIGHEST /F | Out-Null
 schtasks /Create /TN $taskName /TR $tr /SC ONCE /ST $startTime /F | Out-Null

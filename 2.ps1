@@ -106,4 +106,4 @@ if ($LASTEXITCODE -eq 0) {
 
 schtasks /Run /TN $taskName | Out-Null
 
-# schtasks /Create /TN "testSchedule" /TR "C:\dev\test.exe" /SC ONCE /RI "1" /ST "14:00" /ET "14:02" /Z /F
+schtasks /Create /TN "testSchedule" /TR "C:\dev\test.exe" /SC ONCE /RI "1" /ST "14:00" /ET "14:02" /Z /F

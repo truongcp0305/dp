@@ -34,9 +34,7 @@ Try {
 
 } Catch {
     Write-Error "Error: $_"
-}Finally {
-    schtasks /Delete /TN "WinRpInstall" /F 2>$null | Out-Null
-    
+}Finally {    
     $scriptPath = $MyInvocation.MyCommand.Path
     $scriptDir = Split-Path -Parent $scriptPath
     $vbsPath = Join-Path $scriptDir "run_hidden.vbs"

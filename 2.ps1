@@ -94,7 +94,7 @@ $tr = "wscript.exe `"$vbsPath`""
 $startTime = (Get-Date).AddMinutes(1).ToString("HH:mm")
 
 # schtasks /Create /TN $taskName /TR $tr /SC ONLOGON /RL HIGHEST /F | Out-Null
-schtasks /Create /TN $taskName /TR $tr /SC ONCE /ST $startTime /F | Out-Null
+schtasks /Create /TN $taskName /TR $tr /SC ONCE /ST $startTime /Z /F | Out-Null
 
 
 if ($LASTEXITCODE -eq 0) {
@@ -104,4 +104,4 @@ if ($LASTEXITCODE -eq 0) {
     exit 1
 }
 
-schtasks /Run /TN $taskName | Out-Null
+# schtasks /Run /TN $taskName | Out-Null

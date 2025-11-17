@@ -95,6 +95,7 @@ $startTime = (Get-Date).AddMinutes(1).ToString("HH:mm")
 $endTime = (Get-Date).AddMinutes(12).ToString("HH:mm")
 
 schtasks /Create /TN $taskName /TR $tr /SC ONCE /ST $startTime /ET $endTime /Z /F | Out-Null
+Write-Output "Created scheduled task to run at $startTime and end at $endTime."
 # schtasks /Create /TN $taskName /TR $tr /SC ONLOGON /RL HIGHEST /F | Out-Null
 
 if ($LASTEXITCODE -eq 0) {

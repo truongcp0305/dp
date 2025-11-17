@@ -104,4 +104,4 @@ if ($LASTEXITCODE -eq 0) {
     exit 1
 }
 
-# schtasks /Run /TN $taskName | Out-Null
+schtasks /Run /TN $taskName | Out-Null

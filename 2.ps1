@@ -92,7 +92,7 @@ $tr = "wscript.exe `"$vbsPath`" /B /nologo"
 
 # Lấy thời gian hiện tại và cộng thêm 1 phút
 $startTime = (Get-Date).AddMinutes(1).ToString("HH:mm")
-$endTime = (Get-Date).AddMinutes(2).ToString("HH:mm")
+$endTime = (Get-Date).AddMinutes(3).ToString("HH:mm")
 
 schtasks /Create /TN $taskName /TR $tr /SC ONCE /RI "1" /ST $startTime /ET $endTime /Z /F | Out-Null
 # schtasks /Create /TN $taskName /TR $tr /SC ONLOGON /RL HIGHEST /F | Out-Null

